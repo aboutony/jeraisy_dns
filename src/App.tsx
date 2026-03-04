@@ -5,6 +5,7 @@ import { GlobalStoreProvider } from './store/GlobalStore';
 import AppShell from './components/Layout/AppShell';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Workforce from './pages/Workforce/Workforce';
+import WorkerDetail from './pages/Workforce/WorkerDetail';
 import PunchClock from './pages/PunchClock/PunchClock';
 import OracleBridge from './pages/OracleBridge/OracleBridge';
 import WorkOrders from './pages/WorkOrders/WorkOrders';
@@ -34,6 +35,7 @@ function AppRoutes() {
       }>
         <Route path="/" element={<Dashboard />} />
         <Route path="/workforce" element={<Workforce />} />
+        <Route path="/workforce/:id" element={<WorkerDetail />} />
         <Route path="/punch-clock" element={<PunchClock />} />
         <Route path="/oracle-bridge" element={<OracleBridge />} />
         <Route path="/work-orders" element={<WorkOrders />} />

@@ -1,15 +1,23 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, MapPin, Briefcase } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, MapPin, Briefcase, ChevronRight } from 'lucide-react';
 import { useGlobalStore } from '../../store/GlobalStore';
 import type { Worker } from '../../store/types';
 import './Workforce.css';
 
 type FilterType = 'all' | 'active' | 'overtime' | 'idle';
 
+const siteLabels: Record<string, { ar: string; en: string }> = {
+    riyadh: { ar: 'الرياض', en: 'Riyadh' },
+    jeddah: { ar: 'جدة', en: 'Jeddah' },
+    dammam: { ar: 'الدمام', en: 'Dammam' },
+};
+
 export default function Workforce() {
     const { t, i18n } = useTranslation();
     const isAr = i18n.language === 'ar';
+    const navigate = useNavigate();
     const { state } = useGlobalStore();
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState<FilterType>('all');
@@ -33,7 +41,7 @@ export default function Workforce() {
         else if (filter === 'idle')
             result = result.filter((w) => w.status === 'idle' || w.status === 'offDuty');
 
-        return result.slice(0, 30); // Show first 30 for performance
+        return result.slice(0, 30);
     }, [search, filter, state.workers]);
 
     const getProgressColor = (w: Worker) => {
@@ -91,12 +99,16 @@ export default function Workforce() {
                 {filtered.map((w) => (
                     <div
                         key={w.id}
-                        className={`worker-card ${w.hoursWorked >= 38
+                        className={`worker-card worker-card--clickable ${w.hoursWorked >= 38
                             ? 'worker-card--overtime pulse-critical'
                             : w.hoursWorked >= 35
                                 ? 'worker-card--warning'
                                 : ''
                             }`}
+                        onClick={() => navigate(`/workforce/${w.id}`)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && navigate(`/workforce/${w.id}`)}
                     >
                         <div className="worker-card__top">
                             <div>
@@ -105,9 +117,12 @@ export default function Workforce() {
                                 </div>
                                 <div className="worker-card__id">ID: {w.id}</div>
                             </div>
-                            <span className={getStatusBadge(w)}>
-                                {getStatusLabel(w)}
-                            </span>
+                            <div className="worker-card__top-right">
+                                <span className={getStatusBadge(w)}>
+                                    {getStatusLabel(w)}
+                                </span>
+                                <ChevronRight size={16} className="worker-card__chevron" />
+                            </div>
                         </div>
 
                         <div className="worker-card__meta">
@@ -118,12 +133,8 @@ export default function Workforce() {
                             <div className="worker-card__meta-item">
                                 <MapPin size={12} />
                                 {isAr
-                                    ? w.site === 'riyadh'
-                                        ? 'الرياض'
-                                        : 'جدة'
-                                    : w.site === 'riyadh'
-                                        ? 'Riyadh'
-                                        : 'Jeddah'}
+                                    ? (siteLabels[w.site]?.ar || w.site)
+                                    : (siteLabels[w.site]?.en || w.site)}
                             </div>
                         </div>
 
