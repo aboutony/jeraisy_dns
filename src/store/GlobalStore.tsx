@@ -77,7 +77,7 @@ function generateWorkers(count: number = 500): Worker[] {
             hoursWorked: capped,
             weeklyLimit: 38,
             status: deriveStatus(capped),
-            site: i % 3 === 0 ? 'jeddah' : 'riyadh',
+            site: i % 3 === 0 ? 'jeddah' : i % 3 === 1 ? 'riyadh' : 'dammam',
             isSaudi: true,
             punchedIn: false,
             punchInTime: null,
@@ -88,6 +88,8 @@ function generateWorkers(count: number = 500): Worker[] {
 }
 
 // ── Initial State ─────────────────────────────────────────────
+import { generateFleet, sampleTransitMissions, branches as branchData } from '../data/mockFleet';
+
 const initialState: GlobalState = {
     workers: generateWorkers(500),
     workOrders: [],
@@ -107,6 +109,10 @@ const initialState: GlobalState = {
     lastSync: new Date().toISOString(),
     isLoading: true,
     error: null,
+    // ── Fleet & Branch ────────────────────────────────────────
+    vehicles: generateFleet(),
+    transitMissions: sampleTransitMissions,
+    branches: branchData,
 };
 
 // ── Reducer ───────────────────────────────────────────────────

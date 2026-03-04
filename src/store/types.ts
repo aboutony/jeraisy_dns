@@ -17,7 +17,7 @@ export interface Worker {
     hoursWorked: number;
     weeklyLimit: number;
     status: WorkerStatus;
-    site: 'riyadh' | 'jeddah';
+    site: 'riyadh' | 'jeddah' | 'dammam';
     isSaudi: boolean;
     punchedIn: boolean;
     punchInTime: string | null; // ISO timestamp
@@ -26,6 +26,7 @@ export interface Worker {
 
 // ── Work Order ────────────────────────────────────────────────
 export type WorkOrderStatus = 'pending' | 'inProgress' | 'completed' | 'synced';
+export type WorkOrderType = 'standard' | 'transit';
 export type SyncDirection = 'inbound' | 'outbound';
 
 export interface WorkOrder {
@@ -44,6 +45,72 @@ export interface WorkOrder {
     assignedWorkers: number;
     lastSync: string;
     direction: SyncDirection;
+    // ── IBT Transit Fields ────────────────────────────────────
+    orderType: WorkOrderType;
+    originBranch?: BranchCode;
+    destinationBranch?: BranchCode;
+    vehicleId?: string;
+    driverId?: number;
+    loadEfficiency?: number; // 0-100%
+}
+
+// ── Four-Branch Architecture ──────────────────────────────────
+export type BranchCode = 'HQ' | 'RUH' | 'DMM' | 'JED';
+
+export interface Branch {
+    code: BranchCode;
+    nameAr: string;
+    nameEn: string;
+    cityAr: string;
+    cityEn: string;
+    coords: { lat: number; lng: number };
+    vehicleCount: number;
+    workerCount: number;
+    isHQ: boolean;
+}
+
+// ── Fleet VLC ─────────────────────────────────────────────────
+export type VehicleStatus = 'available' | 'inTransit' | 'maintenance' | 'maintenanceDue' | 'outOfService';
+
+export interface Vehicle {
+    id: string;
+    plateAr: string;
+    plateEn: string;
+    typeAr: string;
+    typeEn: string;
+    homeBranch: BranchCode;
+    currentBranch: BranchCode;
+    status: VehicleStatus;
+    totalMileageKm: number;
+    transitMileageKm: number;
+    localMileageKm: number;
+    lastServiceKm: number;
+    nextServiceKm: number;
+    serviceIntervalKm: number;
+    year: number;
+}
+
+// ── Transit Mission ───────────────────────────────────────────
+export type TransitMissionStatus = 'planned' | 'loading' | 'inTransit' | 'delivered' | 'returning' | 'completed';
+
+export interface TransitMission {
+    id: string;
+    workOrderId: string;
+    vehicleId: string;
+    driverId: number;
+    driverNameAr: string;
+    driverNameEn: string;
+    originBranch: BranchCode;
+    destinationBranch: BranchCode;
+    driverHomeBranch: BranchCode;
+    loadEfficiency: number; // 0-100%
+    status: TransitMissionStatus;
+    distanceKm: number;
+    departedAt: string | null;
+    estimatedArrival: string | null;
+    returnToBase: boolean;
+    cargoDescriptionAr: string;
+    cargoDescriptionEn: string;
 }
 
 // ── SKU-to-Labor Mapping ──────────────────────────────────────
@@ -64,7 +131,7 @@ export interface PunchEvent {
     workerNameEn: string;
     type: 'in' | 'out';
     timestamp: string; // ISO
-    site: 'riyadh' | 'jeddah';
+    site: 'riyadh' | 'jeddah' | 'dammam';
     coords: { lat: number; lng: number };
     workOrderId: string | null;
     synced: boolean;
@@ -120,7 +187,7 @@ export interface WpsPayload {
     workerIds: number[];
     totalHours: number;
     completionTimestamp: string;
-    siteCode: 'RUH' | 'JED';
+    siteCode: 'RUH' | 'JED' | 'DMM';
     laborCostSar: number;
 }
 
@@ -137,6 +204,10 @@ export interface GlobalState {
     lastSync: string;
     isLoading: boolean;
     error: string | null;
+    // ── Fleet & Branch ────────────────────────────────────────
+    vehicles: Vehicle[];
+    transitMissions: TransitMission[];
+    branches: Branch[];
 }
 
 // ── Actions ───────────────────────────────────────────────────

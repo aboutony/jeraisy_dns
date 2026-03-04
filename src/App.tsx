@@ -10,6 +10,7 @@ import OracleBridge from './pages/OracleBridge/OracleBridge';
 import WorkOrders from './pages/WorkOrders/WorkOrders';
 import Settings from './pages/Settings/Settings';
 import Compliance from './pages/Compliance/Compliance';
+import FleetVLC from './pages/FleetVLC/FleetVLC';
 import Profile from './pages/Profile/Profile';
 import Login from './pages/Login/Login';
 import './i18n';
@@ -37,6 +38,7 @@ function AppRoutes() {
         <Route path="/oracle-bridge" element={<OracleBridge />} />
         <Route path="/work-orders" element={<WorkOrders />} />
         <Route path="/compliance" element={<Compliance />} />
+        <Route path="/fleet" element={<FleetVLC />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
       </Route>

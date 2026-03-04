@@ -1,20 +1,4 @@
-export interface WorkOrder {
-    id: string;
-    oracleRef: string;
-    customerAr: string;
-    customerEn: string;
-    siteAr: string;
-    siteEn: string;
-    sku: string;
-    descriptionAr: string;
-    descriptionEn: string;
-    estimatedHours: number;
-    actualHours: number | null;
-    status: 'pending' | 'inProgress' | 'completed' | 'synced';
-    assignedWorkers: number;
-    lastSync: string;
-    direction: 'inbound' | 'outbound';
-}
+import type { WorkOrder } from '../store/types';
 
 export const mockWorkOrders: WorkOrder[] = [
     {
@@ -33,6 +17,7 @@ export const mockWorkOrders: WorkOrder[] = [
         assignedWorkers: 6,
         lastSync: '2026-03-04T14:22:00',
         direction: 'outbound',
+        orderType: 'standard',
     },
     {
         id: 'WO-2026-002',
@@ -50,6 +35,7 @@ export const mockWorkOrders: WorkOrder[] = [
         assignedWorkers: 12,
         lastSync: '2026-03-04T14:18:00',
         direction: 'inbound',
+        orderType: 'standard',
     },
     {
         id: 'WO-2026-003',
@@ -67,6 +53,7 @@ export const mockWorkOrders: WorkOrder[] = [
         assignedWorkers: 18,
         lastSync: '2026-03-04T13:55:00',
         direction: 'inbound',
+        orderType: 'standard',
     },
     {
         id: 'WO-2026-004',
@@ -84,6 +71,7 @@ export const mockWorkOrders: WorkOrder[] = [
         assignedWorkers: 8,
         lastSync: '2026-03-04T14:30:00',
         direction: 'outbound',
+        orderType: 'standard',
     },
     {
         id: 'WO-2026-005',
@@ -101,5 +89,76 @@ export const mockWorkOrders: WorkOrder[] = [
         assignedWorkers: 14,
         lastSync: '2026-03-04T14:25:00',
         direction: 'inbound',
+        orderType: 'standard',
+    },
+    // ── IBT Transit Missions ──────────────────────────────────
+    {
+        id: 'WO-2026-T01',
+        oracleRef: 'ORA-IBT-90001',
+        customerAr: 'نقل داخلي — فرع جدة',
+        customerEn: 'Internal Transfer — Jeddah Branch',
+        siteAr: 'الرياض ← جدة',
+        siteEn: 'Riyadh → Jeddah',
+        sku: 'IBT-HOTEL-BATCH',
+        descriptionAr: 'أثاث فندقي فاخر — 12 طقم غرفة',
+        descriptionEn: 'Luxury hotel furniture — 12 room sets',
+        estimatedHours: 14,
+        actualHours: null,
+        status: 'inProgress',
+        assignedWorkers: 2,
+        lastSync: '2026-03-04T06:00:00',
+        direction: 'outbound',
+        orderType: 'transit',
+        originBranch: 'RUH',
+        destinationBranch: 'JED',
+        vehicleId: 'VLC-062',
+        driverId: 1010,
+        loadEfficiency: 92,
+    },
+    {
+        id: 'WO-2026-T02',
+        oracleRef: 'ORA-IBT-90002',
+        customerAr: 'نقل داخلي — فرع الدمام',
+        customerEn: 'Internal Transfer — Dammam Branch',
+        siteAr: 'الرياض ← الدمام',
+        siteEn: 'Riyadh → Dammam',
+        sku: 'IBT-OFFICE-BATCH',
+        descriptionAr: 'مكاتب تجارية — 8 محطات عمل',
+        descriptionEn: 'Commercial desks — 8 workstations',
+        estimatedHours: 6,
+        actualHours: null,
+        status: 'pending',
+        assignedWorkers: 2,
+        lastSync: '2026-03-04T08:00:00',
+        direction: 'outbound',
+        orderType: 'transit',
+        originBranch: 'RUH',
+        destinationBranch: 'DMM',
+        vehicleId: 'VLC-088',
+        driverId: 1015,
+        loadEfficiency: 78,
+    },
+    {
+        id: 'WO-2026-T03',
+        oracleRef: 'ORA-IBT-90003',
+        customerAr: 'إرجاع — فرع جدة إلى الرياض',
+        customerEn: 'Return — Jeddah to Riyadh',
+        siteAr: 'جدة ← الرياض',
+        siteEn: 'Jeddah → Riyadh',
+        sku: 'IBT-RETURN-FURN',
+        descriptionAr: 'إرجاع بضاعة — أثاث مرتجع',
+        descriptionEn: 'Return cargo — returned furniture',
+        estimatedHours: 14,
+        actualHours: 12,
+        status: 'inProgress',
+        assignedWorkers: 1,
+        lastSync: '2026-03-03T14:00:00',
+        direction: 'inbound',
+        orderType: 'transit',
+        originBranch: 'JED',
+        destinationBranch: 'RUH',
+        vehicleId: 'VLC-130',
+        driverId: 1022,
+        loadEfficiency: 45,
     },
 ];

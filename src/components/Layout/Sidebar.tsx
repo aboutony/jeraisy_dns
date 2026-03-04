@@ -6,6 +6,7 @@ import {
     Users,
     Clock,
     Database,
+    Truck,
     ShieldCheck,
     Settings,
 } from 'lucide-react';
@@ -16,6 +17,7 @@ const navItems = [
     { key: 'workforce', path: '/workforce', icon: Users, badge: 12 },
     { key: 'punchClock', path: '/punch-clock', icon: Clock },
     { key: 'oracleBridge', path: '/oracle-bridge', icon: Database },
+    { key: 'fleet', path: '/fleet', icon: Truck },
     { key: 'compliance', path: '/compliance', icon: ShieldCheck },
     { key: 'settings', path: '/settings', icon: Settings },
 ];
