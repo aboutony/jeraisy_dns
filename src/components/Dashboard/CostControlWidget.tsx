@@ -84,8 +84,10 @@ export default function CostControlWidget() {
                                 color: 'var(--text-primary)',
                                 fontFamily: 'var(--font-family)',
                             }}
-                            formatter={(value: number) =>
-                                isAr ? `${value.toLocaleString()} ر.س` : `SAR ${value.toLocaleString()}`
+                            formatter={(value: number | undefined) =>
+                                value != null
+                                    ? (isAr ? `${value.toLocaleString()} ر.س` : `SAR ${value.toLocaleString()}`)
+                                    : ''
                             }
                         />
                         <Legend
