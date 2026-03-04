@@ -68,6 +68,53 @@
     text-overflow: ellipsis;
 }
 
+/* ── Savings Breakdown ───────────────────────────────────── */
+.kpi-tile--expanded {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.kpi-tile--expanded .kpi-tile__icon {
+    align-self: flex-start;
+}
+
+.kpi-tile__breakdown {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.kpi-tile__breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kpi-tile__breakdown-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.kpi-tile__breakdown-value {
+    font-size: var(--font-xs);
+    font-weight: 800;
+    font-family: monospace;
+}
+
+.kpi-tile__breakdown-value--green {
+    color: var(--status-green);
+}
+
+.kpi-tile__breakdown-value--blue {
+    color: var(--jeraisy-blue);
+}
+
 /* ── Dashboard Grid (Heatmap + Cost) ─────────────────────── */
 .dashboard__grid {
     display: grid;
@@ -244,6 +291,24 @@
     font-size: var(--font-xs);
     color: var(--text-secondary);
     margin-top: 2px;
+}
+
+.cost-control__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.cost-control__branch-select {
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    cursor: pointer;
 }
 
 .cost-control__saved {
