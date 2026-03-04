@@ -1,0 +1,214 @@
+/* ── Workforce Page ───────────────────────────────────────── */
+.workforce__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.workforce__title {
+    font-size: var(--font-3xl);
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.workforce__subtitle {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+}
+
+.workforce__controls {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.workforce__search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-4);
+    min-width: 240px;
+}
+
+.workforce__search input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    font-size: var(--font-sm);
+    width: 100%;
+}
+
+.workforce__search input::placeholder {
+    color: var(--text-muted);
+}
+
+.workforce__filters {
+    display: flex;
+    gap: var(--space-1);
+}
+
+.workforce__filter-btn {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--font-xs);
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.workforce__filter-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.workforce__filter-btn--active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
+/* ── Worker Cards ────────────────────────────────────────── */
+.workforce__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-4);
+}
+
+.worker-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.worker-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.worker-card--overtime {
+    border-color: var(--status-red);
+}
+
+.worker-card--warning {
+    border-color: var(--status-amber);
+}
+
+.worker-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-3);
+}
+
+.worker-card__name {
+    font-size: var(--font-base);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.worker-card__id {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.worker-card__meta {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+}
+
+.worker-card__meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+/* Progress bar */
+.worker-card__progress {
+    margin-bottom: var(--space-3);
+}
+
+.worker-card__progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+}
+
+.worker-card__progress-bar {
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.worker-card__progress-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow);
+}
+
+.worker-card__progress-fill--safe {
+    background: var(--status-green);
+}
+
+.worker-card__progress-fill--warning {
+    background: var(--status-amber);
+}
+
+.worker-card__progress-fill--critical {
+    background: var(--status-red);
+}
+
+.worker-card__alert {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-xs);
+    font-weight: 600;
+    margin-top: var(--space-3);
+}
+
+.worker-card__alert--warning {
+    background: var(--status-amber-bg);
+    color: var(--status-amber);
+}
+
+.worker-card__alert--critical {
+    background: var(--status-red-bg);
+    color: var(--status-red);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .workforce__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .workforce__search {
+        min-width: 100%;
+    }
+
+    .workforce__title {
+        font-size: var(--font-2xl);
+    }
+}

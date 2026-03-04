@@ -1,0 +1,259 @@
+/* ── Punch Clock Page ────────────────────────────────────── */
+.punch-clock {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.punch-clock__header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+}
+
+.punch-clock__title {
+    font-size: var(--font-2xl);
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.punch-clock__subtitle {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+}
+
+/* GPS Status */
+.punch-clock__gps {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-5);
+    text-align: center;
+}
+
+.punch-clock__gps--verified {
+    border-color: var(--status-green);
+}
+
+.punch-clock__gps--outside {
+    border-color: var(--status-red);
+}
+
+.punch-clock__gps-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+    font-size: 28px;
+}
+
+.punch-clock__gps-icon--verified {
+    background: var(--status-green-bg);
+    color: var(--status-green);
+}
+
+.punch-clock__gps-icon--outside {
+    background: var(--status-red-bg);
+    color: var(--status-red);
+}
+
+.punch-clock__gps-icon--checking {
+    background: var(--status-amber-bg);
+    color: var(--status-amber);
+    animation: pulse-dot 1s infinite;
+}
+
+.punch-clock__gps-status {
+    font-size: var(--font-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+}
+
+.punch-clock__gps-coords {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.punch-clock__gps-site {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+/* Task Card */
+.punch-clock__task {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+}
+
+.punch-clock__task-title {
+    font-size: var(--font-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.punch-clock__task-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: var(--font-sm);
+}
+
+.punch-clock__task-row:last-child {
+    border-bottom: none;
+}
+
+.punch-clock__task-label {
+    color: var(--text-secondary);
+}
+
+.punch-clock__task-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Timer */
+.punch-clock__timer {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.punch-clock__timer-display {
+    font-size: var(--font-4xl);
+    font-weight: 800;
+    color: var(--jeraisy-gold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+}
+
+.punch-clock__timer-label {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    margin-top: var(--space-1);
+}
+
+/* Punch Button */
+.punch-clock__action {
+    margin-bottom: var(--space-5);
+}
+
+.punch-clock__btn {
+    width: 100%;
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-lg);
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    transition: all var(--transition-base);
+    min-height: 64px;
+}
+
+.punch-clock__btn--start {
+    background: linear-gradient(135deg, var(--status-green), #16a34a);
+    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+}
+
+.punch-clock__btn--start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(34, 197, 94, 0.4);
+}
+
+.punch-clock__btn--end {
+    background: linear-gradient(135deg, var(--status-red), #dc2626);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+.punch-clock__btn--end:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(239, 68, 68, 0.4);
+}
+
+.punch-clock__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Offline Banner */
+.punch-clock__offline {
+    background: var(--status-amber-bg);
+    border: 1px solid var(--status-amber);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    text-align: center;
+    font-size: var(--font-xs);
+    color: var(--status-amber);
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+}
+
+/* Upload */
+.punch-clock__upload {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.punch-clock__upload:hover {
+    border-color: var(--accent-primary);
+}
+
+.punch-clock__upload-icon {
+    font-size: 32px;
+    margin-bottom: var(--space-2);
+}
+
+.punch-clock__upload-text {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+}
+
+/* Overtime Guard Alert */
+.punch-clock__overtime-alert {
+    background: var(--status-red-bg);
+    border: 1px solid var(--status-red);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    text-align: center;
+    font-size: var(--font-xs);
+    color: var(--status-red);
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    animation: pulse-critical 2s infinite;
+}
+
+.punch-clock__gps-radius {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.punch-clock__task-value--danger {
+    color: var(--status-red) !important;
+    font-weight: 800;
+}
