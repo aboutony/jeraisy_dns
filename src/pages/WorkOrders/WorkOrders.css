@@ -3,8 +3,32 @@
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-5);
     color: var(--text-primary);
+}
+
+.work-orders__create-btn {
+    margin-inline-start: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, var(--jeraisy-gold), #c5941a);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--font-sm);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.work-orders__create-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
 }
 
 .work-orders__title {
@@ -213,6 +237,34 @@
     color: var(--status-green);
 }
 
+.wo-card__badge--scheduled {
+    background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+}
+
+.wo-card__badge--transit {
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--jeraisy-gold);
+    animation: transitPulse 2s ease-in-out infinite;
+}
+
+@keyframes transitPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.wo-card__badge--rejected {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--status-red);
+}
+
 /* Expanded Details */
 .wo-card__details {
     padding: var(--space-4) var(--space-5);
@@ -243,6 +295,50 @@
     color: var(--text-primary);
     font-family: monospace;
     font-weight: 700;
+}
+
+.wo-card__detail-value--gold {
+    color: var(--jeraisy-gold);
+    font-family: inherit;
+}
+
+/* Live Geofence Status */
+.wo-card__geofence-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.wo-card__geofence-status--transit {
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--jeraisy-gold);
+}
+
+.wo-card__geofence-status--onsite {
+    background: var(--status-green-bg);
+    color: var(--status-green);
+}
+
+.wo-card__pulse-icon {
+    animation: geoPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes geoPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.3);
+    }
 }
 
 .wo-card__worker-chips {

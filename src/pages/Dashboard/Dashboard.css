@@ -115,6 +115,10 @@
     color: var(--jeraisy-blue);
 }
 
+.kpi-tile__breakdown-value--gold {
+    color: var(--jeraisy-gold);
+}
+
 /* ── Dashboard Grid (Heatmap + Cost) ─────────────────────── */
 .dashboard__grid {
     display: grid;

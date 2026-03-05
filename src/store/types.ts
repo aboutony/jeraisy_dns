@@ -25,7 +25,7 @@ export interface Worker {
 }
 
 // ── Work Order ────────────────────────────────────────────────
-export type WorkOrderStatus = 'pending' | 'inProgress' | 'completed' | 'synced';
+export type WorkOrderStatus = 'pending' | 'scheduled' | 'inTransit' | 'inProgress' | 'completed' | 'synced' | 'rejected';
 export type WorkOrderType = 'standard' | 'transit';
 export type SyncDirection = 'inbound' | 'outbound';
 
@@ -171,7 +171,7 @@ export interface Notification {
     priority: NotificationPriority;
     timestamp: string;
     read: boolean;
-    source: 'overtime' | 'oracle' | 'geofence' | 'system';
+    source: 'overtime' | 'oracle' | 'geofence' | 'system' | 'mission';
 }
 
 // ── Threshold Config ──────────────────────────────────────────
@@ -208,6 +208,35 @@ export interface GlobalState {
     vehicles: Vehicle[];
     transitMissions: TransitMission[];
     branches: Branch[];
+    missionAssignments: MissionAssignment[];
+    completedMissions: CompletionEvidence[];
+    missionSavingsBoost: number;   // SAR added per mission completion
+}
+
+// ── Mission Assignment ────────────────────────────────────────
+export interface MissionAssignment {
+    workOrderId: string;
+    crewIds: number[];
+    vehicleId: string | null;
+    driverId: number | null;
+    gpsCoords: { lat: number; lng: number } | null;
+    siteLocation: string;
+    branchCode: BranchCode;
+    skuCode: string;
+    status: 'assigned' | 'accepted' | 'rejected' | 'inTransit' | 'onSite' | 'completed';
+    assignedAt: string;
+    respondedAt: string | null;
+}
+
+// ── Completion Evidence ───────────────────────────────────────
+export interface CompletionEvidence {
+    workOrderId: string;
+    photos: string[];           // base64 data URIs
+    signatureDataUrl: string;   // canvas toDataURL
+    jobNotes: string;
+    actualHours: number;
+    completedAt: string;        // ISO
+    completedBy: number;        // worker ID
 }
 
 // ── Actions ───────────────────────────────────────────────────
@@ -230,4 +259,8 @@ export type GlobalAction =
     | { type: 'NOTIFICATION_ADDED'; payload: Notification }
     | { type: 'NOTIFICATIONS_CLEARED'; payload?: undefined }
     | { type: 'OVERTIME_BREACH_SIMULATED'; payload: number[] }
-    | { type: 'THRESHOLD_UPDATED'; payload: Partial<ThresholdConfig> };
+    | { type: 'THRESHOLD_UPDATED'; payload: Partial<ThresholdConfig> }
+    | { type: 'MISSION_ASSIGNED'; payload: MissionAssignment }
+    | { type: 'MISSION_ACCEPTED'; payload: { workOrderId: string } }
+    | { type: 'MISSION_REJECTED'; payload: { workOrderId: string; reason?: string } }
+    | { type: 'MISSION_COMPLETED'; payload: CompletionEvidence };

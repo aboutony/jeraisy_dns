@@ -16,10 +16,10 @@ const navItems = [
     { key: 'workOrders', path: '/work-orders', icon: ClipboardList },
     { key: 'workforce', path: '/workforce', icon: Users, badge: 12 },
     { key: 'punchClock', path: '/punch-clock', icon: Clock },
-    { key: 'oracleBridge', path: '/oracle-bridge', icon: Database },
     { key: 'fleet', path: '/fleet', icon: Truck },
     { key: 'compliance', path: '/compliance', icon: ShieldCheck },
     { key: 'settings', path: '/settings', icon: Settings },
+    { key: 'crmBridge', path: '/oracle-bridge', icon: Database },
 ];
 
 export default function Sidebar() {

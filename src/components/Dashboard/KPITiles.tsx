@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { Users, UserCheck, AlertTriangle, TrendingDown, ShieldCheck, Clock } from 'lucide-react';
 import type { Vehicle, TransitMission } from '../../store/types';
+import { AVERAGE_SALARY } from '../../store/GlobalStore';
 
 interface SavingsBreakdown {
     workforce: number;
     logistics: number;
+    fleetROI: number;
     total: number;
 }
 
@@ -111,6 +113,14 @@ export default function KPITiles({ stats, savings }: KPITilesProps) {
                                         {formatSAR(tile.breakdown.logistics, isAr)}
                                     </span>
                                 </div>
+                                <div className="kpi-tile__breakdown-row">
+                                    <span className="kpi-tile__breakdown-label">
+                                        {isAr ? 'عائد الأسطول' : 'Fleet ROI'}
+                                    </span>
+                                    <span className="kpi-tile__breakdown-value kpi-tile__breakdown-value--gold">
+                                        {formatSAR(tile.breakdown.fleetROI, isAr)}
+                                    </span>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -120,22 +130,18 @@ export default function KPITiles({ stats, savings }: KPITilesProps) {
     );
 }
 
-// ── Savings Calculator ────────────────────────────────────────
+// ── Savings Calculator (calibrated to Executive Proposal) ─────
 export function calculateSavings(
     workers: { hoursWorked: number; weeklyLimit: number }[],
     vehicles: Vehicle[],
     missions: TransitMission[],
 ): SavingsBreakdown {
-    // Workforce savings: overtime prevention at SAR 85/hr
-    const OVERTIME_RATE = 85;
-    const workforceSavings = workers.reduce((sum, w) => {
-        if (w.hoursWorked > w.weeklyLimit) {
-            return sum + (w.hoursWorked - w.weeklyLimit) * OVERTIME_RATE;
-        }
-        return sum;
-    }, 0);
+    // ── Workforce Savings: 20% recovery factor for overtime/mismanagement ──
+    // Formula: headcount × average salary × 20%
+    const RECOVERY_FACTOR = 0.20;
+    const workforceSavings = workers.length * AVERAGE_SALARY * RECOVERY_FACTOR;
 
-    // Logistics savings:
+    // ── Logistics Savings ──────────────────────────────────────
     // 1. Load efficiency: empty legs cost SAR 3.5/km, high load prevents waste
     const COST_PER_KM_EMPTY = 3.5;
     const loadSavings = missions.reduce((sum, m) => {
@@ -152,9 +158,16 @@ export function calculateSavings(
 
     const logisticsSavings = Math.round(loadSavings + maintenanceSavings);
 
+    // ── Fleet ROI: 15% reduction in vehicle maintenance & fuel waste ──
+    const AVG_MONTHLY_VEHICLE_COST = 2500; // SAR/vehicle/month (maintenance + fuel)
+    const FLEET_MAINTENANCE_REDUCTION = 0.15;
+    const fleetROI = Math.round(vehicles.length * AVG_MONTHLY_VEHICLE_COST * FLEET_MAINTENANCE_REDUCTION);
+
     return {
         workforce: Math.round(workforceSavings),
         logistics: logisticsSavings,
-        total: Math.round(workforceSavings) + logisticsSavings,
+        fleetROI,
+        total: Math.round(workforceSavings) + logisticsSavings + fleetROI,
     };
 }
+

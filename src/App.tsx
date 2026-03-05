@@ -9,6 +9,10 @@ import WorkerDetail from './pages/Workforce/WorkerDetail';
 import PunchClock from './pages/PunchClock/PunchClock';
 import OracleBridge from './pages/OracleBridge/OracleBridge';
 import WorkOrders from './pages/WorkOrders/WorkOrders';
+import WorkOrderNarrative from './pages/WorkOrders/WorkOrderNarrative';
+import MobileMissionBrief from './pages/WorkOrders/MobileMissionBrief';
+import ProofOfCompletion from './pages/WorkOrders/ProofOfCompletion';
+import MissionSummary from './pages/WorkOrders/MissionSummary';
 import Settings from './pages/Settings/Settings';
 import Compliance from './pages/Compliance/Compliance';
 import FleetVLC from './pages/FleetVLC/FleetVLC';
@@ -39,6 +43,10 @@ function AppRoutes() {
         <Route path="/punch-clock" element={<PunchClock />} />
         <Route path="/oracle-bridge" element={<OracleBridge />} />
         <Route path="/work-orders" element={<WorkOrders />} />
+        <Route path="/work-orders/create" element={<WorkOrderNarrative />} />
+        <Route path="/work-orders/:id/brief" element={<MobileMissionBrief />} />
+        <Route path="/work-orders/:id/complete" element={<ProofOfCompletion />} />
+        <Route path="/work-orders/:id/summary" element={<MissionSummary />} />
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/fleet" element={<FleetVLC />} />
         <Route path="/profile" element={<Profile />} />

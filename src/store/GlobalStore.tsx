@@ -24,6 +24,10 @@ import type {
 } from './types';
 import OracleConnector from '../services/OracleConnector';
 
+// ── Executive Proposal Baseline Constants ─────────────────────
+export const AVERAGE_SALARY = 2100;   // SAR/month — calibrated to Adonis's proposal
+export const TOTAL_WORKFORCE = 600;   // headcount — calibrated to Adonis's proposal
+
 // ── Worker Generation (migrated from data/mockWorkers.ts) ─────
 // In production, workers are fetched from Oracle HR module.
 // This generates the 500-worker roster with realistic Saudi data.
@@ -91,7 +95,7 @@ function generateWorkers(count: number = 500): Worker[] {
 import { generateFleet, sampleTransitMissions, branches as branchData } from '../data/mockFleet';
 
 const initialState: GlobalState = {
-    workers: generateWorkers(500),
+    workers: generateWorkers(TOTAL_WORKFORCE),
     workOrders: [],
     skuMapping: [],
     punchEvents: [],
@@ -113,6 +117,9 @@ const initialState: GlobalState = {
     vehicles: generateFleet(),
     transitMissions: sampleTransitMissions,
     branches: branchData,
+    missionAssignments: [],
+    completedMissions: [],
+    missionSavingsBoost: 0,
 };
 
 // ── Reducer ───────────────────────────────────────────────────
@@ -257,6 +264,110 @@ function globalReducer(state: GlobalState, action: GlobalAction): GlobalState {
                 ...state,
                 thresholds: { ...state.thresholds, ...action.payload },
             };
+
+        case 'MISSION_ASSIGNED': {
+            const mission = action.payload;
+            return {
+                ...state,
+                missionAssignments: [...state.missionAssignments, mission],
+                workOrders: state.workOrders.map(wo =>
+                    wo.id === mission.workOrderId
+                        ? { ...wo, status: 'scheduled' as const }
+                        : wo
+                ),
+            };
+        }
+
+        case 'MISSION_ACCEPTED': {
+            const { workOrderId } = action.payload;
+            const assignment = state.missionAssignments.find(m => m.workOrderId === workOrderId);
+            const crewSet = new Set(assignment?.crewIds || []);
+            return {
+                ...state,
+                workOrders: state.workOrders.map(wo =>
+                    wo.id === workOrderId
+                        ? { ...wo, status: 'inTransit' as const }
+                        : wo
+                ),
+                workers: state.workers.map(w =>
+                    crewSet.has(w.id)
+                        ? { ...w, status: 'active' as WorkerStatus, assignedWorkOrder: workOrderId }
+                        : w
+                ),
+                vehicles: state.vehicles.map(v =>
+                    v.id === assignment?.vehicleId
+                        ? { ...v, status: 'inTransit' as const }
+                        : v
+                ),
+                missionAssignments: state.missionAssignments.map(m =>
+                    m.workOrderId === workOrderId
+                        ? { ...m, status: 'accepted' as const, respondedAt: new Date().toISOString() }
+                        : m
+                ),
+            };
+        }
+
+        case 'MISSION_REJECTED': {
+            const { workOrderId } = action.payload;
+            return {
+                ...state,
+                workOrders: state.workOrders.map(wo =>
+                    wo.id === workOrderId
+                        ? { ...wo, status: 'rejected' as const }
+                        : wo
+                ),
+                missionAssignments: state.missionAssignments.map(m =>
+                    m.workOrderId === workOrderId
+                        ? { ...m, status: 'rejected' as const, respondedAt: new Date().toISOString() }
+                        : m
+                ),
+            };
+        }
+
+        case 'MISSION_COMPLETED': {
+            const evidence = action.payload;
+            const assignment = state.missionAssignments.find(m => m.workOrderId === evidence.workOrderId);
+            const crewSet = new Set(assignment?.crewIds || []);
+
+            // ROI per mission: (actualHours × 65 SAR × 20%) + (350 SAR × 15%)
+            const savingsIncrement = Math.round(evidence.actualHours * 65 * 0.20 + 350 * 0.15);
+
+            return {
+                ...state,
+                // Triple-Update 1: WO → completed
+                workOrders: state.workOrders.map(wo =>
+                    wo.id === evidence.workOrderId
+                        ? { ...wo, status: 'completed' as const, actualHours: evidence.actualHours, lastSync: evidence.completedAt }
+                        : wo
+                ),
+                // Triple-Update 2: Asset Release
+                vehicles: state.vehicles.map(v =>
+                    v.id === assignment?.vehicleId
+                        ? { ...v, status: 'available' as const }
+                        : v
+                ),
+                workers: state.workers.map(w => {
+                    if (!crewSet.has(w.id)) return w;
+                    const newHours = w.hoursWorked + evidence.actualHours;
+                    return {
+                        ...w,
+                        status: (newHours >= 38 ? 'overtime' : 'idle') as import('./types').WorkerStatus,
+                        hoursWorked: Math.round(newHours * 10) / 10,
+                        punchedIn: false,
+                        punchInTime: null,
+                        assignedWorkOrder: null,
+                    };
+                }),
+                // Triple-Update 3: Mission completed + evidence stored
+                missionAssignments: state.missionAssignments.map(m =>
+                    m.workOrderId === evidence.workOrderId
+                        ? { ...m, status: 'completed' as const }
+                        : m
+                ),
+                completedMissions: [...state.completedMissions, evidence],
+                missionSavingsBoost: state.missionSavingsBoost + savingsIncrement,
+            };
+        }
 
         default:
             return state;

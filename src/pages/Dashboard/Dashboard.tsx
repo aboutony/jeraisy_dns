@@ -14,8 +14,15 @@ export default function Dashboard() {
 
     const stats = useMemo(() => getWorkforceSummary(state.workers), [state.workers]);
     const savings = useMemo(
-        () => calculateSavings(state.workers, state.vehicles, state.transitMissions),
-        [state.workers, state.vehicles, state.transitMissions]
+        () => {
+            const base = calculateSavings(state.workers, state.vehicles, state.transitMissions);
+            // ROI Feedback Loop: add savings from completed missions
+            return {
+                ...base,
+                total: base.total + state.missionSavingsBoost,
+            };
+        },
+        [state.workers, state.vehicles, state.transitMissions, state.missionSavingsBoost]
     );
 
     return (

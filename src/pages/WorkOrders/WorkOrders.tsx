@@ -1,10 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
     ClipboardList, MapPin, Users, Clock, CheckCircle2,
-    Loader2, AlertTriangle, ChevronDown, ChevronUp, Filter,
+    Loader2, AlertTriangle, ChevronDown, ChevronUp, Filter, Plus,
+    Radio, ShieldCheck,
 } from 'lucide-react';
 import { useGlobalStore } from '../../store/GlobalStore';
+import OracleConnector from '../../services/OracleConnector';
 import type { WorkOrder, WorkOrderStatus } from '../../store/types';
 import './WorkOrders.css';
 
@@ -13,10 +16,12 @@ type TabFilter = 'all' | 'pending' | 'inProgress' | 'completed';
 export default function WorkOrders() {
     const { i18n } = useTranslation();
     const isAr = i18n.language === 'ar';
+    const navigate = useNavigate();
     const { state, dispatch } = useGlobalStore();
     const [activeTab, setActiveTab] = useState<TabFilter>('all');
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [assigningId, setAssigningId] = useState<string | null>(null);
+    const skuMap = useMemo(() => OracleConnector.getSkuLaborMap(), []);
 
     const tabs: { key: TabFilter; labelAr: string; labelEn: string; count: number }[] = [
         { key: 'all', labelAr: 'الكل', labelEn: 'All', count: state.workOrders.length },
@@ -33,9 +38,12 @@ export default function WorkOrders() {
 
     const statusConfig: Record<WorkOrderStatus, { colorClass: string; iconEl: React.ReactNode; labelAr: string; labelEn: string }> = {
         pending: { colorClass: 'wo-card__badge--pending', iconEl: <Clock size={12} />, labelAr: 'قيد الانتظار', labelEn: 'Pending' },
+        scheduled: { colorClass: 'wo-card__badge--scheduled', iconEl: <Clock size={12} />, labelAr: 'مجدول', labelEn: 'Scheduled' },
+        inTransit: { colorClass: 'wo-card__badge--transit', iconEl: <AlertTriangle size={12} />, labelAr: 'في الطريق', labelEn: 'In Transit' },
         inProgress: { colorClass: 'wo-card__badge--progress', iconEl: <Loader2 size={12} />, labelAr: 'قيد التنفيذ', labelEn: 'In Progress' },
         completed: { colorClass: 'wo-card__badge--done', iconEl: <CheckCircle2 size={12} />, labelAr: 'مكتمل', labelEn: 'Completed' },
         synced: { colorClass: 'wo-card__badge--synced', iconEl: <CheckCircle2 size={12} />, labelAr: 'تمت المزامنة', labelEn: 'Synced' },
+        rejected: { colorClass: 'wo-card__badge--rejected', iconEl: <AlertTriangle size={12} />, labelAr: 'مرفوض', labelEn: 'Rejected' },
     };
 
     const handleAssignWorkers = (wo: WorkOrder) => {
@@ -81,6 +89,13 @@ export default function WorkOrders() {
                         {isAr ? 'تعيين الفنيين ومتابعة التنفيذ' : 'Assign technicians and track job execution'}
                     </p>
                 </div>
+                <button
+                    className="work-orders__create-btn"
+                    onClick={() => navigate('/work-orders/create')}
+                >
+                    <Plus size={18} />
+                    {isAr ? 'مهمة جديدة' : 'New Mission'}
+                </button>
             </div>
 
             {/* Stats Bar */}
@@ -169,13 +184,30 @@ export default function WorkOrders() {
                                 {isExpanded && (
                                     <div className="wo-card__details">
                                         <div className="wo-card__detail-row">
-                                            <span className="wo-card__detail-label">{isAr ? 'مرجع أوراكل' : 'Oracle Ref'}</span>
-                                            <span className="wo-card__detail-value">{wo.oracleRef}</span>
+                                            <span className="wo-card__detail-label">{isAr ? 'معرّف السلطة' : 'Authority ID'}</span>
+                                            <span className="wo-card__detail-value">{`JRY-DNS-${wo.id.replace(/\D/g, '').padStart(5, '0')}`}</span>
                                         </div>
                                         <div className="wo-card__detail-row">
-                                            <span className="wo-card__detail-label">{isAr ? 'رمز المنتج' : 'SKU'}</span>
-                                            <span className="wo-card__detail-value">{wo.sku}</span>
+                                            <span className="wo-card__detail-label">{isAr ? 'فئة المهمة' : 'Mission Category'}</span>
+                                            <span className="wo-card__detail-value wo-card__detail-value--gold">
+                                                {(() => {
+                                                    const sku = skuMap.find(s => s.sku === wo.sku);
+                                                    return sku ? (isAr ? sku.nameAr : sku.nameEn) : (isAr ? wo.descriptionAr : wo.descriptionEn);
+                                                })()}
+                                            </span>
                                         </div>
+                                        {/* Live Geofence Status for active orders */}
+                                        {(wo.status === 'inProgress' || wo.status === 'inTransit') && (
+                                            <div className="wo-card__detail-row">
+                                                <span className="wo-card__detail-label">{isAr ? 'الحالة الحية' : 'Live Status'}</span>
+                                                <span className={`wo-card__geofence-status wo-card__geofence-status--${wo.status === 'inTransit' ? 'transit' : 'onsite'}`}>
+                                                    {wo.status === 'inTransit'
+                                                        ? <><Radio size={12} className="wo-card__pulse-icon" /> {isAr ? 'في الطريق' : 'En Route'}</>
+                                                        : <><ShieldCheck size={12} /> {isAr ? 'الفني في الموقع' : 'Technician On-Site'}</>
+                                                    }
+                                                </span>
+                                            </div>
+                                        )}
                                         {assignedWorkers.length > 0 && (
                                             <div className="wo-card__detail-row wo-card__detail-row--stacked">
                                                 <span className="wo-card__detail-label">{isAr ? 'الفنيون المعينون' : 'Assigned Technicians'}</span>

@@ -1,0 +1,383 @@
+/* ── Mission Summary — Printable Report ───────────────── */
+
+.msummary {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-4);
+}
+
+/* ── Header (non-print) ──────────────────────────────── */
+.msummary__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.msummary__back {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.msummary__back:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-primary);
+}
+
+.msummary__header-info {
+    flex: 1;
+}
+
+.msummary__page-title {
+    font-size: var(--font-xl);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.msummary__wo-id {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: monospace;
+    color: var(--text-muted);
+}
+
+.msummary__print-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, var(--jeraisy-gold), #c5941a);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--font-sm);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.msummary__print-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* ── Report Body ──────────────────────────────────────── */
+.msummary__report {
+    padding: var(--space-5);
+}
+
+.msummary__brand {
+    text-align: center;
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--jeraisy-gold);
+}
+
+.msummary__brand-logo {
+    font-size: var(--font-2xl);
+    font-weight: 900;
+    color: var(--jeraisy-gold);
+    letter-spacing: 0.08em;
+}
+
+.msummary__brand-subtitle {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.msummary__report-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-lg);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: var(--space-5);
+}
+
+.msummary__completed-badge {
+    margin-inline-start: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: var(--space-1) var(--space-3);
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--status-green);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* ── Section Titles ───────────────────────────────────── */
+.msummary__section-title {
+    font-size: var(--font-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* ── Timeline ─────────────────────────────────────────── */
+.msummary__timeline {
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.msummary__timeline-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-inline-start: var(--space-3);
+    border-inline-start: 2px solid var(--border-color);
+}
+
+.msummary__timeline-step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    position: relative;
+}
+
+.msummary__timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    inset-inline-start: calc(var(--space-3) * -1 - 7px);
+}
+
+.msummary__timeline-dot--gold {
+    background: var(--jeraisy-gold);
+}
+
+.msummary__timeline-dot--blue {
+    background: #3b82f6;
+}
+
+.msummary__timeline-dot--green {
+    background: var(--status-green);
+}
+
+.msummary__timeline-label {
+    font-size: var(--font-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.msummary__timeline-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+/* ── Details Grid ─────────────────────────────────────── */
+.msummary__details,
+.msummary__resources,
+.msummary__financials,
+.msummary__evidence {
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.msummary__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.msummary__label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.msummary__value {
+    font-size: var(--font-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.msummary__value--gold {
+    color: var(--jeraisy-gold);
+}
+
+.msummary__value--green {
+    color: var(--status-green);
+}
+
+/* ── Resources ────────────────────────────────────────── */
+.msummary__resource-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-3);
+    color: var(--text-primary);
+    font-size: var(--font-sm);
+}
+
+.msummary__resource-id {
+    font-weight: 800;
+    font-family: monospace;
+    color: var(--jeraisy-gold);
+}
+
+.msummary__resource-desc {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.msummary__crew {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.msummary__crew-chip {
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ── Evidence ─────────────────────────────────────────── */
+.msummary__photos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.msummary__photo {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.msummary__notes {
+    margin-bottom: var(--space-4);
+}
+
+.msummary__notes-text {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: var(--space-2) 0 0;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.msummary__signature-block {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-color);
+}
+
+.msummary__sig-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+}
+
+.msummary__sig-img {
+    max-width: 300px;
+    height: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+/* ── Footer ───────────────────────────────────────────── */
+.msummary__footer {
+    text-align: center;
+    padding-top: var(--space-5);
+    margin-top: var(--space-5);
+    border-top: 2px solid var(--jeraisy-gold);
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* ── Print Styles ─────────────────────────────────────── */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .msummary {
+        padding: 0;
+        max-width: none;
+    }
+
+    .msummary__report {
+        padding: 0;
+    }
+
+    .glass-panel {
+        background: #fff !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+
+    .msummary__brand-logo {
+        color: #1a1a1a !important;
+    }
+
+    .msummary__value,
+    .msummary__timeline-label,
+    .msummary__report-title {
+        color: #1a1a1a !important;
+    }
+
+    .msummary__label,
+    .msummary__timeline-date,
+    .msummary__brand-subtitle {
+        color: #666 !important;
+    }
+
+    .msummary__value--gold {
+        color: #b8860b !important;
+    }
+
+    .msummary__value--green,
+    .msummary__completed-badge {
+        color: #16a34a !important;
+    }
+}
