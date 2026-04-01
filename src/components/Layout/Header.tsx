@@ -49,24 +49,7 @@ export default function Header() {
     return (
         <header className="header">
             <div className="header__logo">
-                <svg className="header__brand-logo" viewBox="0 0 100 100" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="headerSwirl" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#0a4d8c" />
-                            <stop offset="50%" stopColor="#1a7fd4" />
-                            <stop offset="100%" stopColor="#5db8f0" />
-                        </linearGradient>
-                        <linearGradient id="headerAccent" x1="0%" y1="100%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#e8872a" />
-                            <stop offset="100%" stopColor="#f5a623" />
-                        </linearGradient>
-                    </defs>
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="url(#headerSwirl)" strokeWidth="5" strokeLinecap="round" strokeDasharray="60 20 30 10" />
-                    <circle cx="50" cy="50" r="26" fill="none" stroke="url(#headerSwirl)" strokeWidth="3.5" strokeLinecap="round" strokeDasharray="40 15 20 8" opacity="0.7" />
-                    <path d="M35 65 L50 25 L65 65 M40 52 L60 52" fill="none" stroke="url(#headerAccent)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-                    <circle cx="50" cy="78" r="5" fill="url(#headerSwirl)" />
-                    <circle cx="50" cy="78" r="2" fill="white" />
-                </svg>
+                <img src="/axon-logo.svg" alt="AXON" className="header__brand-logo" />
                 <div className="header__logo-text">
                     AXON
                 </div>
