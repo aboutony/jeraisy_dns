@@ -154,13 +154,13 @@ export default function Compliance() {
 
     const handleExportSaudization = () => {
         const content = [
-            `# Saudization Certificate — Jeraisy Group`,
+            `# Saudization Certificate — AXON`,
             `Date: ${new Date().toISOString().split('T')[0]}`,
             `Total Workforce: ${state.workers.length}`,
             `Saudi Nationals: ${state.workers.filter(w => w.isSaudi !== false).length}`,
             `Saudization Rate: ${saudizationRate}%`,
             `Status: COMPLIANT (Nitaqat Platinum)`,
-            `\nCertified by: Jeraisy DNS — Digital Nervous System v1.0.0`,
+            `\nCertified by: AXON — Orchestrating Field Excellence v1.0.0`,
         ].join('\n');
         const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);

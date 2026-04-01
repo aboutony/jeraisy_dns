@@ -233,13 +233,13 @@ export default function Settings() {
                             </div>
                             <p className="settings__support-desc">
                                 {isAr
-                                    ? 'دليل شامل لاستخدام الجهاز العصبي الرقمي للجريسي'
-                                    : 'Complete guide for using the Jeraisy Digital Nervous System'
+                                    ? 'دليل شامل لاستخدام AXON — تنسيق التميز الميداني'
+                                    : 'Complete guide for using AXON — Orchestrating Field Excellence'
                                 }
                             </p>
                             <button className="settings__download-btn" onClick={() => {
                                 const blob = new Blob([
-                                    '# دليل المستخدم — الجريسي DNS\n\n',
+                                    '# دليل المستخدم — AXON\n\n',
                                     '## 1. لوحة القيادة\nتعرض لوحة القيادة نظرة شاملة على أداء القوى العاملة.\n\n',
                                     '## 2. ساعة الحضور\nاستخدم زر "بدء المهمة" بعد التحقق من الموقع الجغرافي.\n\n',
                                     '## 3. جسر أوراكل\nمراقبة حالة المزامنة مع Oracle CRM.\n\n',
@@ -249,7 +249,7 @@ export default function Settings() {
                                 const url = URL.createObjectURL(blob);
                                 const a = document.createElement('a');
                                 a.href = url;
-                                a.download = 'jeraisy-dns-user-guide-ar.md';
+                                a.download = 'axon-user-guide-ar.md';
                                 a.click();
                                 URL.revokeObjectURL(url);
                             }}>

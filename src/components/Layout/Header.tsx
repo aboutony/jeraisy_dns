@@ -49,9 +49,9 @@ export default function Header() {
     return (
         <header className="header">
             <div className="header__logo">
-                <img src="/rhc-logo-white.png" alt="Jeraisy" className="header__brand-logo" />
+                <img src="/axon-logo.png" alt="AXON" className="header__brand-logo" />
                 <div className="header__logo-text">
-                    {i18n.language === 'ar' ? 'الجريسي' : 'JERAISY'} <span>DNS</span>
+                    AXON
                 </div>
             </div>
 

@@ -90,7 +90,7 @@ export default function MissionSummary() {
             <div className="msummary__report" ref={printRef}>
                 {/* Logo Row */}
                 <div className="msummary__brand">
-                    <div className="msummary__brand-logo">JERAISY DNS</div>
+                    <div className="msummary__brand-logo">AXON</div>
                     <div className="msummary__brand-subtitle">
                         {isAr ? 'تقرير إكمال المهمة' : 'Mission Completion Report'}
                     </div>
@@ -257,7 +257,7 @@ export default function MissionSummary() {
 
                 {/* Footer */}
                 <div className="msummary__footer">
-                    <div>{isAr ? 'الجريسي — الجهاز العصبي الرقمي' : 'Jeraisy Digital Nervous System'}</div>
+                    <div>{isAr ? 'AXON — تنسيق التميز الميداني' : 'AXON — Orchestrating Field Excellence'}</div>
                     <div>{isAr ? 'تقرير آلي — سري' : 'Auto-generated report — Confidential'}</div>
                 </div>
             </div>

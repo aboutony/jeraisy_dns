@@ -53,15 +53,15 @@ export default function Login() {
                 {/* Logo & Brand */}
                 <div className="login__brand">
                     <img
-                        src="/rhc-logo-white.png"
-                        alt="Jeraisy Riyadh House"
+                        src="/axon-logo.png"
+                        alt="AXON"
                         className="login__logo"
                     />
                     <h1 className="login__title">
-                        {isAr ? 'الجريسي' : 'JERAISY'} <span>DNS</span>
+                        AXON
                     </h1>
                     <p className="login__subtitle">
-                        {isAr ? 'الجهاز العصبي الرقمي' : 'Digital Nervous System'}
+                        {isAr ? 'تنسيق التميز الميداني' : 'Orchestrating Field Excellence'}
                     </p>
                 </div>
 

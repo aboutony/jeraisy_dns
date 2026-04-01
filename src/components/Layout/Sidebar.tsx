@@ -29,13 +29,13 @@ export default function Sidebar() {
     return (
         <aside className="sidebar">
             <div className="sidebar__brand">
-                <img src="/rhc-logo-white.png" alt="Jeraisy" className="sidebar__brand-logo" />
+                <img src="/axon-logo.png" alt="AXON" className="sidebar__brand-logo" />
                 <div className="sidebar__brand-text">
                     <div className="sidebar__brand-name">
-                        {i18n.language === 'ar' ? 'الجريسي' : 'JERAISY'}
+                        {i18n.language === 'ar' ? 'AXON' : 'AXON'}
                     </div>
                     <div className="sidebar__brand-sub">
-                        {i18n.language === 'ar' ? 'الجهاز العصبي الرقمي' : 'Digital Nervous System'}
+                        {i18n.language === 'ar' ? 'تنسيق التميز الميداني' : 'Orchestrating Field Excellence'}
                     </div>
                 </div>
             </div>
