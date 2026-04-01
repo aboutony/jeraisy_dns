@@ -371,6 +371,182 @@
     text-transform: uppercase;
 }
 
+/* Digital Passport card */
+.worker-detail__passport-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.worker-detail__passport-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.worker-detail__passport-field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.worker-detail__passport-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.worker-detail__passport-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--font-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.worker-detail__passport-value--gold  { color: var(--jeraisy-gold); }
+.worker-detail__passport-value--green { color: var(--status-green); }
+
+.worker-detail__passport-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.worker-detail__passport-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid;
+}
+.worker-detail__passport-badge--active {
+    color: var(--status-green);
+    border-color: rgba(34,197,94,0.3);
+    background: rgba(34,197,94,0.07);
+}
+.worker-detail__passport-badge--expiring {
+    color: #f59e0b;
+    border-color: rgba(245,158,11,0.3);
+    background: rgba(245,158,11,0.07);
+}
+
+.worker-detail__passport-academy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    align-self: flex-start;
+    padding: var(--space-2) var(--space-4);
+    background: none;
+    border: 1px solid var(--jeraisy-gold);
+    color: var(--jeraisy-gold);
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+.worker-detail__passport-academy-btn:hover { background: rgba(201,168,76,0.08); }
+
+/* 360° Gauge */
+.worker-detail__gauge-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.worker-detail__gauge-score {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-1);
+}
+
+.worker-detail__gauge-total {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--jeraisy-gold);
+    line-height: 1;
+}
+
+.worker-detail__gauge-max {
+    font-size: var(--font-lg);
+    color: var(--text-secondary);
+}
+
+.worker-detail__gauge-low-conf {
+    font-size: var(--font-xs);
+    font-weight: 600;
+    color: #f59e0b;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-left: var(--space-2);
+}
+
+.worker-detail__gauge-bars {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.worker-detail__gauge-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.worker-detail__gauge-label {
+    font-size: var(--font-xs);
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 95px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.worker-detail__gauge-weight {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-left: auto;
+}
+
+.worker-detail__gauge-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.worker-detail__gauge-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.5s ease;
+}
+
+.worker-detail__gauge-val {
+    font-size: var(--font-xs);
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 28px;
+    text-align: right;
+}
+
 /* Transit Action */
 .worker-detail__ibt-btn {
     display: flex;

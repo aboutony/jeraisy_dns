@@ -4,8 +4,11 @@ import { useTranslation } from 'react-i18next';
 import {
     ArrowLeft, User, MapPin, Briefcase, Clock, Truck,
     Shield, AlertTriangle, ArrowRight, ToggleLeft, ToggleRight,
-    Package, ClipboardList, Home,
+    Package, ClipboardList, Home, GraduationCap, BadgeCheck,
+    Star, Zap, Activity,
 } from 'lucide-react';
+import { computeCompositeScore } from '../../services/LoadBalancer';
+import type { FeedbackInputs } from '../../services/LoadBalancer';
 import { useGlobalStore } from '../../store/GlobalStore';
 import type { BranchCode } from '../../store/types';
 import './WorkerDetail.css';
@@ -289,6 +292,118 @@ export default function WorkerDetail() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Digital Passport */}
+            <div className="worker-detail__section">
+                <h2 className="worker-detail__section-title">
+                    <BadgeCheck size={18} />
+                    {isAr ? 'الجواز الرقمي — V-Profile' : 'Digital Passport — V-Profile'}
+                </h2>
+                <div className="worker-detail__passport-card">
+                    <div className="worker-detail__passport-row">
+                        <div className="worker-detail__passport-field">
+                            <span className="worker-detail__passport-label">
+                                {isAr ? 'مستوى الشهادة' : 'Certification Tier'}
+                            </span>
+                            <span className="worker-detail__passport-value worker-detail__passport-value--gold">
+                                <GraduationCap size={14} />
+                                {isAr ? 'مركِّب محترف' : 'Pro Installer'}
+                            </span>
+                        </div>
+                        <div className="worker-detail__passport-field">
+                            <span className="worker-detail__passport-label">
+                                {isAr ? 'حالة اللغة' : 'Language Status'}
+                            </span>
+                            <span className="worker-detail__passport-value worker-detail__passport-value--green">
+                                {isAr ? 'ثنائي اللغة موثق' : 'Verified Bilingual'}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="worker-detail__passport-badges">
+                        <span className="worker-detail__passport-badge worker-detail__passport-badge--active">
+                            <BadgeCheck size={12} />
+                            {isAr ? 'ترخيص التجارة — ساري' : 'Trade License — Active'}
+                        </span>
+                        <span className="worker-detail__passport-badge worker-detail__passport-badge--active">
+                            <Shield size={12} />
+                            {isAr ? 'الهوية الوطنية — موثقة' : 'National ID — Verified'}
+                        </span>
+                        <span className="worker-detail__passport-badge worker-detail__passport-badge--expiring">
+                            <AlertTriangle size={12} />
+                            {isAr ? 'شهادة السلامة — تنتهي 2026-08' : 'Safety Cert — Exp. 2026-08'}
+                        </span>
+                    </div>
+                    <button
+                        className="worker-detail__passport-academy-btn"
+                        onClick={() => navigate('/academy')}
+                    >
+                        <GraduationCap size={15} />
+                        {isAr ? 'عرض مسار التدريب في الأكاديمية' : 'View Training Path in Academy'}
+                        <ArrowRight size={14} />
+                    </button>
+                </div>
+            </div>
+
+            {/* 360° Performance Gauge */}
+            <div className="worker-detail__section">
+                <h2 className="worker-detail__section-title">
+                    <Activity size={18} />
+                    {isAr ? 'مقياس الأداء 360°' : '360° Performance Gauge'}
+                </h2>
+                {(() => {
+                    // Stub feedback inputs — wire to live API / V-Trace survey data
+                    const feedbackInputs: FeedbackInputs = {
+                        customer:   { avgStarRating: 4.3, ratingCount: 12 },
+                        autoSignal: { onTimeRate: 0.91, ttiEfficiency: 0.87, photoPassRate: 0.96 },
+                        supervisor: { score: 4.1, evaluationCount: 4 },
+                        peer:       { score: 3.9, peerCount: 6 },
+                    };
+                    const breakdown = computeCompositeScore(feedbackInputs);
+                    const channels: Array<{
+                        labelEn: string; labelAr: string;
+                        value: number; weight: string;
+                        icon: React.ElementType; color: string;
+                    }> = [
+                        { labelEn: 'Customer',   labelAr: 'العميل',       value: breakdown.customerComponent,   weight: '40%', icon: Star,         color: '#c9a84c' },
+                        { labelEn: 'Auto-Signal',labelAr: 'الإشارات التلقائية', value: breakdown.autoSignalComponent, weight: '30%', icon: Zap,  color: '#3b82f6' },
+                        { labelEn: 'Supervisor', labelAr: 'المشرف',       value: breakdown.supervisorComponent, weight: '20%', icon: Shield,       color: '#8b5cf6' },
+                        { labelEn: 'Peer',       labelAr: 'الزملاء',      value: breakdown.peerComponent,       weight: '10%', icon: User,         color: '#22c55e' },
+                    ];
+                    return (
+                        <div className="worker-detail__gauge-card">
+                            <div className="worker-detail__gauge-score">
+                                <span className="worker-detail__gauge-total">
+                                    {breakdown.compositeScore.toFixed(1)}
+                                </span>
+                                <span className="worker-detail__gauge-max">/100</span>
+                                {breakdown.lowConfidence && (
+                                    <span className="worker-detail__gauge-low-conf">
+                                        {isAr ? 'ثقة منخفضة' : 'Low Confidence'}
+                                    </span>
+                                )}
+                            </div>
+                            <div className="worker-detail__gauge-bars">
+                                {channels.map(ch => (
+                                    <div key={ch.labelEn} className="worker-detail__gauge-row">
+                                        <ch.icon size={14} style={{ color: ch.color, flexShrink: 0 }} />
+                                        <span className="worker-detail__gauge-label">
+                                            {isAr ? ch.labelAr : ch.labelEn}
+                                            <span className="worker-detail__gauge-weight">{ch.weight}</span>
+                                        </span>
+                                        <div className="worker-detail__gauge-bar-track">
+                                            <div
+                                                className="worker-detail__gauge-bar-fill"
+                                                style={{ width: `${ch.value}%`, background: ch.color }}
+                                            />
+                                        </div>
+                                        <span className="worker-detail__gauge-val">{ch.value.toFixed(0)}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })()}
             </div>
 
             {/* Transit Action */}

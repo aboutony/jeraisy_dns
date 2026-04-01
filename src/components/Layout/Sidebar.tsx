@@ -10,6 +10,7 @@ import {
     Truck,
     ShieldCheck,
     Settings,
+    GraduationCap,
 } from 'lucide-react';
 
 const navItems = [
@@ -21,6 +22,10 @@ const navItems = [
     { key: 'compliance', path: '/compliance', icon: ShieldCheck },
     { key: 'settings', path: '/settings', icon: Settings },
     { key: 'crmBridge', path: '/oracle-bridge', icon: Database },
+];
+
+const academyItems = [
+    { key: 'academy', path: '/academy', icon: GraduationCap },
 ];
 
 export default function Sidebar() {
@@ -61,6 +66,26 @@ export default function Sidebar() {
                 })}
             </nav>
 
+            <div className="sidebar__section-label sidebar__section-label--sovereign">
+                {i18n.language === 'ar' ? 'الأكاديمية السيادية' : 'SOVEREIGN ACADEMY'}
+            </div>
+
+            <nav className="sidebar__nav">
+                {academyItems.map((item) => {
+                    const isActive = location.pathname.startsWith(item.path);
+                    return (
+                        <Link
+                            key={item.key}
+                            to={item.path}
+                            className={`sidebar__link sidebar__link--academy ${isActive ? 'sidebar__link--active' : ''}`}
+                        >
+                            <item.icon size={20} />
+                            <span>{t(`nav.${item.key}`)}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
+
             <div className="sidebar__footer">
                 <div className="sidebar__footer-version">v1.0.0 — KSA Sovereign</div>
             </div>
@@ -68,4 +93,4 @@ export default function Sidebar() {
     );
 }
 
-export { navItems };
+export { navItems, academyItems };

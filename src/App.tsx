@@ -17,6 +17,7 @@ import Settings from './pages/Settings/Settings';
 import Compliance from './pages/Compliance/Compliance';
 import FleetVLC from './pages/FleetVLC/FleetVLC';
 import Profile from './pages/Profile/Profile';
+import Academy from './pages/Academy/Academy';
 import Login from './pages/Login/Login';
 import './i18n';
 
@@ -51,6 +52,8 @@ function AppRoutes() {
         <Route path="/fleet" element={<FleetVLC />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/academy" element={<Academy />} />
+        <Route path="/academy/:tab" element={<Academy />} />
       </Route>
     </Routes>
   );
