@@ -1,0 +1,411 @@
+/* AXON Phase 5-D: TrackingView.css
+   Mobile-first customer live tracking page.
+   Standalone styles — zero dependency on internal admin CSS. */
+
+/* ── Reset & base ──────────────────────────────────────────────────────────── */
+.tv-root {
+    min-height: 100dvh;
+    background: #0d0f14;
+    color: #e8eaf0;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 2rem;
+}
+
+.tv-root--rtl {
+    direction: rtl;
+    font-family: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Loading & error states ─────────────────────────────────────────────────── */
+.tv-root--loading,
+.tv-root--error {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 2rem;
+    gap: 1.25rem;
+}
+
+.tv-spinner {
+    color: #c9a84c;
+    animation: tv-spin 1s linear infinite;
+}
+@keyframes tv-spin {
+    to { transform: rotate(360deg); }
+}
+
+.tv-loading-text {
+    color: #8b8fa8;
+    font-size: 0.95rem;
+}
+
+.tv-error-icon   { color: #ef4444; }
+.tv-error-title  { font-size: 1.25rem; font-weight: 700; margin: 0; }
+.tv-error-body   { color: #8b8fa8; font-size: 0.9rem; max-width: 300px; }
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+.tv-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 1.25rem 1.25rem 0.75rem;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.tv-header__logo {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #c9a84c;
+}
+
+.tv-header__tagline {
+    font-size: 0.75rem;
+    color: #8b8fa8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ── Hero section ───────────────────────────────────────────────────────────── */
+.tv-hero {
+    padding: 1.5rem 1.25rem 1rem;
+    background: linear-gradient(160deg, rgba(201,168,76,0.06) 0%, transparent 60%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.tv-hero__headline {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #f0f2f8;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.tv-hero__subline {
+    font-size: 0.9rem;
+    color: #8b8fa8;
+    margin: 0;
+}
+
+/* ── ETA badge ──────────────────────────────────────────────────────────────── */
+.tv-eta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(201, 168, 76, 0.12);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    color: #c9a84c;
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    width: fit-content;
+}
+
+.tv-eta--complete {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+.tv-eta--unknown {
+    background: rgba(139, 143, 168, 0.1);
+    border-color: rgba(139, 143, 168, 0.2);
+    color: #8b8fa8;
+}
+
+/* ── Progress bar ───────────────────────────────────────────────────────────── */
+.tv-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.25rem;
+}
+
+.tv-progress__track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.tv-progress__fill {
+    height: 100%;
+    background: linear-gradient(90deg, #c9a84c, #e8c96a);
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tv-progress__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #c9a84c;
+    min-width: 2.5rem;
+    text-align: right;
+}
+
+/* ── Generic section ────────────────────────────────────────────────────────── */
+.tv-section {
+    padding: 1.1rem 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.tv-section__title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8b8fa8;
+    margin: 0 0 0.75rem;
+}
+
+/* ── Checkpoint timeline ────────────────────────────────────────────────────── */
+.tv-timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+}
+
+.tv-timeline::before {
+    content: '';
+    position: absolute;
+    top: 11px;
+    left: 11px;
+    right: 11px;
+    height: 2px;
+    background: rgba(255,255,255,0.07);
+    z-index: 0;
+}
+
+.tv-timeline__step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    position: relative;
+    z-index: 1;
+}
+
+.tv-timeline__dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #1a1e2a;
+    border: 2px solid rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 0;
+}
+
+.tv-timeline__step--done .tv-timeline__dot {
+    background: #c9a84c;
+    border-color: #c9a84c;
+    color: #0d0f14;
+}
+
+.tv-timeline__step--current .tv-timeline__dot {
+    border-color: #c9a84c;
+    box-shadow: 0 0 0 4px rgba(201,168,76,0.18);
+}
+
+.tv-timeline__label {
+    font-size: 0.6rem;
+    color: #8b8fa8;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.tv-timeline__step--done .tv-timeline__label {
+    color: #c9a84c;
+}
+
+/* ── Installer card ─────────────────────────────────────────────────────────── */
+.tv-installer-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 14px;
+    padding: 1rem;
+}
+
+.tv-installer-card__avatar {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.tv-installer-card__photo {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #c9a84c;
+}
+
+.tv-installer-card__avatar-placeholder {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c9a84c, #e8c96a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0d0f14;
+}
+
+.tv-installer-card__badge-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: 2px solid #0d0f14;
+}
+
+.tv-installer-card__name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f0f2f8;
+    margin: 0 0 0.3rem;
+}
+
+.tv-installer-card__badge {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: #c9a84c;
+    margin: 0;
+}
+
+/* ── Job summary ────────────────────────────────────────────────────────────── */
+.tv-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tv-summary__row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.tv-summary__icon {
+    color: #8b8fa8;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.tv-summary__icon--gold { color: #c9a84c; }
+
+.tv-summary__label {
+    display: block;
+    font-size: 0.7rem;
+    color: #8b8fa8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1px;
+}
+
+.tv-summary__value {
+    display: block;
+    font-size: 0.9rem;
+    color: #e8eaf0;
+    font-weight: 500;
+}
+
+.tv-summary__value--gold { color: #c9a84c; }
+
+/* ── Report a Concern CTA ───────────────────────────────────────────────────── */
+.tv-concern-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(239,68,68,0.07);
+    border: 1px solid rgba(239,68,68,0.25);
+    color: #ef4444;
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.tv-concern-btn:hover {
+    background: rgba(239,68,68,0.12);
+    border-color: rgba(239,68,68,0.4);
+}
+
+.tv-concern-btn__arrow {
+    margin-left: auto;
+    opacity: 0.6;
+}
+
+.tv-root--rtl .tv-concern-btn { text-align: right; }
+.tv-root--rtl .tv-concern-btn__arrow { margin-left: 0; margin-right: auto; }
+
+.tv-concern-note {
+    font-size: 0.72rem;
+    color: #8b8fa8;
+    margin: 0.5rem 0 0;
+    line-height: 1.5;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
+.tv-footer {
+    margin-top: auto;
+    padding: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.tv-footer__ref {
+    font-size: 0.7rem;
+    color: #8b8fa8;
+    margin: 0;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.tv-footer__brand {
+    font-size: 0.7rem;
+    color: rgba(201,168,76,0.5);
+    margin: 0;
+}
+
+/* ── Responsive: larger screens center the card ────────────────────────────── */
+@media (min-width: 520px) {
+    .tv-root {
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+        min-height: 100vh;
+    }
+}
