@@ -80,10 +80,11 @@
 }
 
 .login__logo {
-    height: 80px;
-    width: auto;
+    height: auto;
+    width: 280px;
+    max-width: 90%;
     margin-bottom: var(--space-4);
-    filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.3));
+    filter: drop-shadow(0 0 12px rgba(99, 179, 242, 0.3));
 }
 
 .login__title {
@@ -250,6 +251,6 @@
     }
 
     .login__logo {
-        height: 60px;
+        width: 220px;
     }
 }

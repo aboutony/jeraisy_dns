@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, Link } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
 import {
     LayoutDashboard,
     ClipboardList,
@@ -25,19 +26,13 @@ const navItems = [
 export default function Sidebar() {
     const { t, i18n } = useTranslation();
     const location = useLocation();
+    const { theme } = useTheme();
+    const logoSrc = theme === 'dark' ? '/axon-logo-dark.svg' : '/axon-logo-light.svg';
 
     return (
         <aside className="sidebar">
             <div className="sidebar__brand">
-                <img src="/axon-logo.svg" alt="AXON" className="sidebar__brand-logo" />
-                <div className="sidebar__brand-text">
-                    <div className="sidebar__brand-name">
-                        AXON
-                    </div>
-                    <div className="sidebar__brand-sub">
-                        {i18n.language === 'ar' ? 'تنسيق التميز الميداني' : 'Orchestrating Field Excellence'}
-                    </div>
-                </div>
+                <img src={logoSrc} alt="AXON — Orchestrating Field Excellence" className="sidebar__brand-logo" />
             </div>
 
             <div className="sidebar__section-label">

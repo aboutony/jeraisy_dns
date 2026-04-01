@@ -49,10 +49,7 @@ export default function Header() {
     return (
         <header className="header">
             <div className="header__logo">
-                <img src="/axon-logo.svg" alt="AXON" className="header__brand-logo" />
-                <div className="header__logo-text">
-                    AXON
-                </div>
+                <img src={theme === 'dark' ? '/axon-logo-dark.svg' : '/axon-logo-light.svg'} alt="AXON" className="header__brand-logo" />
             </div>
 
             <div className="header__actions">

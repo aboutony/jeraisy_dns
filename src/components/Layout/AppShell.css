@@ -54,10 +54,11 @@
     gap: var(--space-3);
 }
 
-/* ── Official Jeraisy Logo ────────────────────────────────── */
+/* ── Official AXON Logo ────────────────────────────────── */
 .header__brand-logo {
-    height: 36px;
+    height: 32px;
     width: auto;
+    max-width: 160px;
     flex-shrink: 0;
     object-fit: contain;
     transition: filter var(--transition-fast);
@@ -65,7 +66,7 @@
 }
 
 [data-theme="dark"] .header__brand-logo {
-    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+    filter: drop-shadow(0 0 6px rgba(99, 179, 242, 0.3));
 }
 
 .header__logo-text {
@@ -333,8 +334,9 @@
 }
 
 .sidebar__brand-logo {
-    height: 44px;
-    width: auto;
+    height: auto;
+    width: 100%;
+    max-width: 200px;
     flex-shrink: 0;
     object-fit: contain;
     transition: filter var(--transition-fast);
@@ -342,7 +344,7 @@
 }
 
 [data-theme="dark"] .sidebar__brand-logo {
-    filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.3));
+    filter: drop-shadow(0 0 6px rgba(99, 179, 242, 0.3));
 }
 
 .sidebar__brand-text {

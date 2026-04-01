@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, AlertCircle, Loader2, Globe, Shield } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import './Login.css';
 
 export default function Login() {
@@ -10,6 +11,7 @@ export default function Login() {
     const isAr = i18n.language === 'ar';
     const navigate = useNavigate();
     const { login } = useAuth();
+    const { theme } = useTheme();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -53,16 +55,10 @@ export default function Login() {
                 {/* Logo & Brand */}
                 <div className="login__brand">
                     <img
-                        src="/axon-logo.svg"
-                        alt="AXON"
+                        src={theme === 'dark' ? '/axon-logo-dark.svg' : '/axon-logo-light.svg'}
+                        alt="AXON — Orchestrating Field Excellence"
                         className="login__logo"
                     />
-                    <h1 className="login__title">
-                        AXON
-                    </h1>
-                    <p className="login__subtitle">
-                        {isAr ? 'تنسيق التميز الميداني' : 'Orchestrating Field Excellence'}
-                    </p>
                 </div>
 
                 {/* Sovereign Badge */}
