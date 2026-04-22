@@ -80,6 +80,42 @@ app.get('/api/work-orders', authenticateToken, async (req, res) => {
   }
 });
 
+app.post('/api/work-orders', authenticateToken, async (req, res) => {
+  try {
+    const { order_number, title, description, priority, assigned_to } = req.body;
+    const result = await pool.query(
+      'INSERT INTO work_orders (order_number, title, description, priority, assigned_to) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [order_number, title, description, priority, assigned_to]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Fleet vehicles CRUD routes (protected)
+app.get('/api/fleet', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM fleet_vehicles ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/fleet', authenticateToken, async (req, res) => {
+  try {
+    const { license_plate, vehicle_type, capacity, status } = req.body;
+    const result = await pool.query(
+      'INSERT INTO fleet_vehicles (license_plate, vehicle_type, capacity, status) VALUES ($1, $2, $3, $4) RETURNING *',
+      [license_plate, vehicle_type, capacity, status]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/work-orders', async (req, res) => {
   try {
     const { order_number, title, description, priority, assigned_to } = req.body;
