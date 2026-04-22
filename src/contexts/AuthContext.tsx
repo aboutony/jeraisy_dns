@@ -53,21 +53,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     const login = useCallback(async (username: string, password: string): Promise<boolean> => {
-        // Simulate API delay
-        await new Promise(r => setTimeout(r, 800));
+        const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-        const entry = DEMO_USERS[username.toLowerCase()];
-        if (entry && entry.password === password) {
-            setUser(entry.user);
-            localStorage.setItem('jeraisy_dns_session', JSON.stringify(entry.user));
+        try {
+            const response = await fetch(`${API_BASE}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: username, password })
+            });
+
+            if (!response.ok) {
+                return false;
+            }
+
+            const data = await response.json();
+
+            // Store token
+            localStorage.setItem('authToken', data.token);
+
+            // Set user
+            setUser({
+                id: data.user.id,
+                username: data.user.email,
+                email: data.user.email,
+                firstName: data.user.first_name,
+                lastName: data.user.last_name,
+                role: 'worker',
+                avatar: '/avatars/default.jpg',
+            });
+
             return true;
+        } catch (error) {
+            console.error('Login failed:', error);
+            return false;
         }
-        return false;
     }, []);
 
     const logout = useCallback(() => {
         setUser(null);
-        localStorage.removeItem('jeraisy_dns_session');
+        localStorage.removeItem('authToken');
     }, []);
 
     return (
