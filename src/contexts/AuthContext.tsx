@@ -2,6 +2,10 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 
 interface AuthUser {
     id: number;
+    username?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
     nameAr: string;
     nameEn: string;
     role: 'admin' | 'director' | 'supervisor' | 'worker';
@@ -19,31 +23,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// ── Demo user credentials (kept for fallback) ─────────────────────────────────────
-const DEMO_USERS: Record<string, { password: string; user: AuthUser }> = {
-    admin: {
-        password: 'jeraisy2026',
-        user: {
-            id: 1,
-            nameAr: 'فهد الجريسي',
-            nameEn: 'Fahd Al-Jeraisy',
-            role: 'admin',
-            department: 'Executive Management',
-            departmentAr: 'الإدارة التنفيذية',
-        },
-    },
-    director: {
-        password: 'director2026',
-        user: {
-            id: 2,
-            nameAr: 'سعد الدوسري',
-            nameEn: 'Saad Al-Dosari',
-            role: 'director',
-            department: 'Operations',
-            departmentAr: 'العمليات',
-        },
-    },
-};
+// Removed DEMO_USERS as real authentication is now implemented
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(() => {
@@ -80,7 +60,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 email: data.user.email,
                 firstName: data.user.first_name,
                 lastName: data.user.last_name,
+                nameAr: data.user.first_name + ' ' + data.user.last_name, // Fallback
+                nameEn: data.user.first_name + ' ' + data.user.last_name,
                 role: 'worker',
+                department: 'Operations', // Default
+                departmentAr: 'العمليات',
                 avatar: '/avatars/default.jpg',
             });
 
