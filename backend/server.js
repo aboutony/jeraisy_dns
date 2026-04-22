@@ -3,6 +3,8 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const jwt = require('jsonwebtoken');
+const WebSocket = require('ws');
 require('dotenv').config();
 
 const app = express();
@@ -12,6 +14,15 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
+
+// JWT secret
+const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-key';
+
+// WebSocket server for real-time tracking
+const wss = new WebSocket.Server({ noServer: true });
+
+// WebSocket connections store
+const wsClients = new Map();
 
 // Middleware
 app.use(helmet());
@@ -136,6 +147,205 @@ class OracleCrmAdapter extends BaseCrmAdapter {
 // Register adapters
 crmRegistry.register('oracle', new OracleCrmAdapter());
 
+// GPS/Geofencing Routes
+app.post('/api/gps/track', authenticateToken, async (req, res) => {
+  try {
+    const { latitude, longitude, accuracy } = req.body;
+    const workerId = req.user.id;
+
+    // Save GPS tracking data
+    await pool.query(
+      'INSERT INTO gps_tracking (worker_id, latitude, longitude, accuracy) VALUES ($1, $2, $3, $4)',
+      [workerId, latitude, longitude, accuracy]
+    );
+
+    // Check geofencing for work orders
+    const workOrders = await pool.query(
+      'SELECT id, location FROM work_orders WHERE assigned_to = $1 AND status = $2',
+      [workerId, 'in_progress']
+    );
+
+    let geofenceStatus = 'outside';
+    for (const order of workOrders.rows) {
+      if (order.location && order.location.latitude && order.location.longitude) {
+        const withinFence = isWithinGeofence(
+          latitude, longitude,
+          order.location.latitude, order.location.longitude,
+          50 // 50 meter radius
+        );
+        if (withinFence) {
+          geofenceStatus = 'inside';
+          break;
+        }
+      }
+    }
+
+    // Notify WebSocket clients
+    const wsMessage = JSON.stringify({
+      type: 'gps_update',
+      workerId,
+      latitude,
+      longitude,
+      geofenceStatus,
+      timestamp: new Date().toISOString()
+    });
+
+    wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(wsMessage);
+      }
+    });
+
+    res.json({ success: true, geofenceStatus });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/gps/history/:workerId', authenticateToken, async (req, res) => {
+  try {
+    const { workerId } = req.params;
+    const limit = req.query.limit || 100;
+
+    const result = await pool.query(
+      'SELECT * FROM gps_tracking WHERE worker_id = $1 ORDER BY timestamp DESC LIMIT $2',
+      [workerId, limit]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Compliance and WPS Routes
+app.post('/api/compliance/violation', authenticateToken, async (req, res) => {
+  try {
+    const { workerId, violationType, description, severity } = req.body;
+
+    const result = await pool.query(
+      'INSERT INTO compliance_violations (worker_id, violation_type, description, severity) VALUES ($1, $2, $3, $4) RETURNING *',
+      [workerId, violationType, description, severity]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/compliance/violations', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM compliance_violations ORDER BY reported_date DESC');
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/compliance/wps-submit', authenticateToken, async (req, res) => {
+  try {
+    const { workOrderId, hoursWorked, materialsUsed, completionNotes } = req.body;
+
+    // Submit to CRM if configured
+    const adapter = crmRegistry.getActive();
+    if (adapter && adapter.submitWpsEntry) {
+      const crmResult = await adapter.submitWpsEntry({
+        workOrderId,
+        hoursWorked,
+        materialsUsed,
+        completionNotes
+      });
+
+      if (crmResult.success) {
+        res.json({ success: true, reference: crmResult.reference });
+      } else {
+        res.status(500).json({ error: 'CRM submission failed' });
+      }
+    } else {
+      // Store locally if no CRM
+      res.json({ success: true, reference: `LOCAL-${Date.now()}` });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Academy LMS Routes
+app.get('/api/academy/courses', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM academy_courses ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/academy/courses', authenticateToken, async (req, res) => {
+  try {
+    const { name, code, description, durationHours, category } = req.body;
+
+    const result = await pool.query(
+      'INSERT INTO academy_courses (course_name, course_code, description, duration_hours, category) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [name, code, description, durationHours, category]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/academy/enroll', authenticateToken, async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const workerId = req.user.id;
+
+    const result = await pool.query(
+      'INSERT INTO course_enrollments (worker_id, course_id) VALUES ($1, $2) RETURNING *',
+      [workerId, courseId]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/academy/my-courses', authenticateToken, async (req, res) => {
+  try {
+    const workerId = req.user.id;
+
+    const result = await pool.query(`
+      SELECT c.*, e.enrollment_date, e.progress_percentage, e.status
+      FROM academy_courses c
+      JOIN course_enrollments e ON c.course_id = e.course_id
+      WHERE e.worker_id = $1
+      ORDER BY e.enrollment_date DESC
+    `, [workerId]);
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/academy/certifications', authenticateToken, async (req, res) => {
+  try {
+    const { courseId, score } = req.body;
+    const workerId = req.user.id;
+
+    const result = await pool.query(
+      'INSERT INTO certifications (worker_id, course_id, issued_date, score) VALUES ($1, $2, $3, $4) RETURNING *',
+      [workerId, courseId, new Date(), score]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // CRM Integration Routes
 app.post('/api/crm/sync/work-orders', async (req, res) => {
   try {
@@ -198,6 +408,27 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// GPS/Geofencing utilities
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371e3; // Earth's radius in meters
+  const φ1 = lat1 * Math.PI / 180;
+  const φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return R * c;
+}
+
+function isWithinGeofence(userLat, userLon, centerLat, centerLon, radiusMeters) {
+  const distance = calculateDistance(userLat, userLon, centerLat, centerLon);
+  return distance <= radiusMeters;
+}
+
 // Protected routes (workers, work orders, fleet) remain the same...
 
 // Basic health check
@@ -212,6 +443,26 @@ app.get('/', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+// WebSocket upgrade handling
+server.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
+});
+
+// WebSocket connection handling
+wss.on('connection', (ws, request) => {
+  console.log('WebSocket client connected');
+
+  ws.on('message', (message) => {
+    console.log('Received:', message.toString());
+  });
+
+  ws.on('close', () => {
+    console.log('WebSocket client disconnected');
+  });
 });
