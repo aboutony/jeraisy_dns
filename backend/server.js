@@ -5,6 +5,10 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
 const WebSocket = require('ws');
+const multer = require('multer');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -17,6 +21,38 @@ const pool = new Pool({
 
 // JWT secret
 const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-key';
+
+// File upload configuration
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Invalid file type'));
+    }
+  }
+});
 
 // WebSocket server for real-time tracking
 const wss = new WebSocket.Server({ noServer: true });
@@ -439,6 +475,191 @@ app.get('/health', (req, res) => {
 // Placeholder routes
 app.get('/', (req, res) => {
   res.json({ message: 'Jeraisy DNS Backend API' });
+});
+
+// V-Vault file upload routes
+app.post('/api/vault/upload', authenticateToken, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const { documentType, description } = req.body;
+    const workerId = req.user.id;
+    const filePath = req.file.path;
+    const originalName = req.file.originalname;
+    const fileSize = req.file.size;
+
+    // Generate SHA256 hash for immutability
+    const fileBuffer = fs.readFileSync(filePath);
+    const sha256Hash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+
+    // Store in database
+    const result = await pool.query(
+      'INSERT INTO axon_vvault_documents (worker_id, document_type, vault_path, sha256_hash, uploaded_at, immutable, metadata) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [workerId, documentType, filePath, sha256Hash, new Date(), true, { originalName, fileSize, description }]
+    );
+
+    res.status(201).json({
+      success: true,
+      document: result.rows[0],
+      message: 'File uploaded successfully'
+    });
+  } catch (error) {
+    console.error('File upload error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/vault/documents', authenticateToken, async (req, res) => {
+  try {
+    const workerId = req.user.id;
+    const result = await pool.query(
+      'SELECT * FROM axon_vvault_documents WHERE worker_id = $1 ORDER BY uploaded_at DESC',
+      [workerId]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/vault/download/:documentId', authenticateToken, async (req, res) => {
+  try {
+    const { documentId } = req.params;
+    const workerId = req.user.id;
+
+    const result = await pool.query(
+      'SELECT * FROM axon_vvault_documents WHERE document_id = $1 AND worker_id = $2',
+      [documentId, workerId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Document not found' });
+    }
+
+    const document = result.rows[0];
+    const filePath = document.vault_path;
+
+    if (fs.existsSync(filePath)) {
+      res.download(filePath, document.metadata.originalName);
+    } else {
+      res.status(404).json({ error: 'File not found on server' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Push notifications system
+const notifications = new Map(); // userId -> notifications array
+
+app.post('/api/notifications/send', authenticateToken, async (req, res) => {
+  try {
+    const { recipientId, title, message, type } = req.body;
+    const senderId = req.user.id;
+
+    const notification = {
+      id: Date.now().toString(),
+      senderId,
+      recipientId,
+      title,
+      message,
+      type: type || 'info',
+      read: false,
+      createdAt: new Date()
+    };
+
+    // Store in memory (in production, use database)
+    if (!notifications.has(recipientId)) {
+      notifications.set(recipientId, []);
+    }
+    notifications.get(recipientId).push(notification);
+
+    // Send via WebSocket if user is connected
+    wss.clients.forEach(client => {
+      if (client.userId === recipientId) {
+        client.send(JSON.stringify({
+          type: 'notification',
+          data: notification
+        }));
+      }
+    });
+
+    res.json({ success: true, notification });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/notifications', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const userNotifications = notifications.get(userId) || [];
+  res.json(userNotifications);
+});
+
+app.put('/api/notifications/:notificationId/read', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const { notificationId } = req.params;
+
+  const userNotifications = notifications.get(userId) || [];
+  const notification = userNotifications.find(n => n.id === notificationId);
+
+  if (notification) {
+    notification.read = true;
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ error: 'Notification not found' });
+  }
+});
+
+// Enhanced error handling middleware
+app.use((error, req, res, next) => {
+  console.error('Error:', error);
+
+  if (error instanceof multer.MulterError) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File too large. Maximum size is 10MB.' });
+    }
+  }
+
+  res.status(500).json({ error: 'Internal server error' });
+});
+
+// Data synchronization endpoints
+app.post('/api/sync/full', authenticateToken, async (req, res) => {
+  try {
+    const { lastSync } = req.body;
+    const userId = req.user.id;
+
+    // Sync workers (if user is admin)
+    const workers = await pool.query('SELECT * FROM workers WHERE updated_at > $1', [lastSync]);
+
+    // Sync work orders for user
+    const workOrders = await pool.query(
+      'SELECT * FROM work_orders WHERE (assigned_to = $1 OR created_by = $1) AND updated_at > $2',
+      [userId, lastSync]
+    );
+
+    // Sync compliance data
+    const compliance = await pool.query(
+      'SELECT * FROM compliance_violations WHERE worker_id = $1 AND created_at > $2',
+      [userId, lastSync]
+    );
+
+    res.json({
+      success: true,
+      data: {
+        workers: workers.rows,
+        workOrders: workOrders.rows,
+        compliance: compliance.rows,
+        lastSync: new Date()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Start server
