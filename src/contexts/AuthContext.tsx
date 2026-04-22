@@ -4,7 +4,7 @@ interface AuthUser {
     id: number;
     nameAr: string;
     nameEn: string;
-    role: 'admin' | 'director' | 'supervisor';
+    role: 'admin' | 'director' | 'supervisor' | 'worker';
     department: string;
     departmentAr: string;
     avatar?: string;
@@ -19,7 +19,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// ── Demo user credentials ─────────────────────────────────────
+// ── Demo user credentials (kept for fallback) ─────────────────────────────────────
 const DEMO_USERS: Record<string, { password: string; user: AuthUser }> = {
     admin: {
         password: 'jeraisy2026',
